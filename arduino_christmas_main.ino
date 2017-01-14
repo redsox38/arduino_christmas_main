@@ -9,12 +9,18 @@
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
+ 
+ * The mega should have a HC05 module in master mode connected to pins 18/19 to 
+ * send commands in SPP mode to an additional arduino with an HC05 in slave mode and its own
+ * relay board
 */
 
 
 //data storage variables
 byte newData = 0;
 byte prevData = 0;
+
+const byte ledPin = 13;
 
 //freq variables
 unsigned int timer = 0;//counts period of wave
@@ -24,8 +30,14 @@ unsigned int delay_time = 200;
 
 void setup(){
   
-  //Serial.begin(9600);
+  // setup HC-05 that has already been configured for master mode
+  // and paired with another HC-05
+  pinMode(ledPin, OUTPUT);
   
+  // setup console for debugging
+  Serial.begin(9600);
+  
+  // setup PORTD pins
   pinMode(30,OUTPUT);//led indicator pin
   pinMode(31,OUTPUT);//output pin
   pinMode(32,OUTPUT);
@@ -55,6 +67,7 @@ void setup(){
   ADCSRA |= (1 << ADSC); //start ADC measurements
   
   sei();//enable interrupts
+  
 }
 
 ISR(ADC_vect) {//when new ADC value ready
@@ -75,16 +88,25 @@ void loop(){
   //frequency = 38462/period;//timer rate/period
   //print results
   if (frequency >= 1 and frequency <= 399) {
+    //bass
+    digitalWrite(ledPin, HIGH);
+    Serial1.write("1");
+    digitalWrite(ledPin, LOW);
     PORTC |= B01101111;
     delay(delay_time);
     PORTC &= B10010000;
   }
   if (frequency >= 201 and frequency <= 850.99) {
+    //low midrange
     PORTC |= B10010000;
     delay(delay_time);
     PORTC &= B01101111;
   }
   if (frequency >= 800 and frequency <= 1500) {
+    //midrange
+    digitalWrite(ledPin, HIGH);
+    Serial1.write("2");
+    digitalWrite(ledPin, LOW);
     PORTC |= B11011011;
     delay(delay_time);
     PORTC &= B00100100;
