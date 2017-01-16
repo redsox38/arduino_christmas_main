@@ -37,7 +37,10 @@ void setup(){
   // setup console for debugging
   Serial.begin(9600);
   
-  // setup PORTD pins
+  // Open up serial line to HC05 on pins 18/19
+  Serial1.begin(38400);
+  
+  // setup PORTC pins
   pinMode(30,OUTPUT);//led indicator pin
   pinMode(31,OUTPUT);//output pin
   pinMode(32,OUTPUT);
@@ -90,11 +93,11 @@ void loop(){
   if (frequency >= 1 and frequency <= 399) {
     //bass
     digitalWrite(ledPin, HIGH);
-    Serial1.write("1");
-    digitalWrite(ledPin, LOW);
+    Serial1.write("1"); 
     PORTC |= B01101111;
     delay(delay_time);
     PORTC &= B10010000;
+    digitalWrite(ledPin, LOW);
   }
   if (frequency >= 201 and frequency <= 850.99) {
     //low midrange
@@ -106,10 +109,10 @@ void loop(){
     //midrange
     digitalWrite(ledPin, HIGH);
     Serial1.write("2");
-    digitalWrite(ledPin, LOW);
     PORTC |= B11011011;
     delay(delay_time);
     PORTC &= B00100100;
+    digitalWrite(ledPin, LOW);
   }
   if (frequency >= 1000 and frequency <= 3000) {
     PORTC |= B01111101;
