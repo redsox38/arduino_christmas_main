@@ -93,7 +93,7 @@ void loop(){
   if (frequency >= 1 and frequency <= 399) {
     //bass
     digitalWrite(ledPin, HIGH);
-    Serial1.write("1"); 
+    Serial1.write("3"); 
     PORTC |= B01101111;
     delay(delay_time);
     PORTC &= B10010000;
@@ -101,9 +101,12 @@ void loop(){
   }
   if (frequency >= 201 and frequency <= 850.99) {
     //low midrange
+    digitalWrite(ledPin, HIGH);
+    Serial1.write("1");
     PORTC |= B10010000;
     delay(delay_time);
     PORTC &= B01101111;
+    digitalWrite(ledPin, LOW);
   }
   if (frequency >= 800 and frequency <= 1500) {
     //midrange
