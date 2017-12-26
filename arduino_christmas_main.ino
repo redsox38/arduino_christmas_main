@@ -90,16 +90,16 @@ ISR(ADC_vect) {//when new ADC value ready
 void loop(){
   //frequency = 38462/period;//timer rate/period
   //print results
-  if (frequency >= 1 and frequency <= 399) {
+  if (frequency >= 0 and frequency <= 250) {
     //bass
     digitalWrite(ledPin, HIGH);
     Serial1.write("3"); 
-    PORTC |= B01101111;
-    delay(delay_time);
-    PORTC &= B10010000;
+    PORTC |= B00000000;
+    // double the normal delay to match the time for sequence 3 on the uno board
+    delay(2 * delay_time);
+    PORTC &= B11111111;
     digitalWrite(ledPin, LOW);
-  }
-  if (frequency >= 201 and frequency <= 850.99) {
+  } else if (frequency > 250 and frequency <= 500) {
     //low midrange
     digitalWrite(ledPin, HIGH);
     Serial1.write("1");
@@ -107,8 +107,7 @@ void loop(){
     delay(delay_time);
     PORTC &= B01101111;
     digitalWrite(ledPin, LOW);
-  }
-  if (frequency >= 800 and frequency <= 1500) {
+  } else if (frequency > 500 and frequency <= 2000) {
     //midrange
     digitalWrite(ledPin, HIGH);
     Serial1.write("2");
@@ -116,16 +115,16 @@ void loop(){
     delay(delay_time);
     PORTC &= B00100100;
     digitalWrite(ledPin, LOW);
-  }
-  if (frequency >= 1000 and frequency <= 3000) {
+  } else if (frequency > 2000 and frequency <= 4000) {
+    // upper midrange
     PORTC |= B01111101;
     delay(delay_time);
     PORTC &= B10000010;
-  }
-  if (frequency >= 1800 and frequency <= 20000) {
-    PORTC |= B11111010;
+  } else if (frequency > 4000 and frequency <= 20000) {
+    // presence
+    PORTC |= B01111010;
     delay(delay_time);
-    PORTC &= B00000101;
+    PORTC &= B10000101;
   }
 
   //Serial.println(" hz");
